@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Register — SmartCity Hub{% endblock %}
+
+{% block content %}
+<div class="container auth-wrap">
+    <div class="card auth-card">
+        <div class="auth-head">
+            <span class="brand-mark"><i class="bi bi-buildings"></i></span>
+            <h1>Create your account</h1>
+            <p>Join SmartCity Hub to report issues and follow community events.</p>
+        </div>
+        <div class="auth-body">
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <div class="input-icon">
+                        <i class="bi bi-person"></i>
+                        <input type="text" id="username" name="username" class="form-control"
+                               placeholder="Choose a username" maxlength="150" required autofocus>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <div class="input-icon">
+                        <i class="bi bi-envelope"></i>
+                        <input type="email" id="email" name="email" class="form-control"
+                               placeholder="you@example.com" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="role" class="form-label">Account type</label>
+                    <div class="input-icon">
+                        <i class="bi bi-people"></i>
+                        <select id="role" name="role" class="form-select">
+                            <option value="citizen">Citizen</option>
+                            <option value="organizer">Event Organizer</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="input-icon">
+                            <i class="bi bi-lock"></i>
+                            <input type="password" id="password" name="password" class="form-control"
+                                   placeholder="Create a password" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="confirm_password" class="form-label">Confirm password</label>
+                        <div class="input-icon">
+                            <i class="bi bi-shield-lock"></i>
+                            <input type="password" id="confirm_password" name="confirm_password"
+                                   class="form-control" placeholder="Repeat password" required>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-accent w-100 mt-4">
+                    <i class="bi bi-person-plus me-1"></i>Create account
+                </button>
+            </form>
+
+            <p class="auth-switch mt-4 mb-0">
+                Already have an account? <a href="{% url 'login' %}">Sign in</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}SmartCity Hub — Your city, connected{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <span class="hero-eyebrow"><i class="bi bi-geo-alt-fill"></i>Community services, simplified</span>
+                <h1 class="hero-title">Your city,<br><span>connected.</span></h1>
+                <p class="hero-lead">
+                    Discover local events, report issues in your neighbourhood, and follow every
+                    service request from submission to resolution — all in one place.
+                </p>
+                <div class="d-flex flex-wrap gap-3 mt-4">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'dashboard' %}" class="btn btn-accent btn-lg">
+                            Go to dashboard <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                        <a href="{% url 'submit_request' %}" class="btn btn-outline-light btn-lg">Report an issue</a>
+                    {% else %}
+                        <a href="{% url 'register' %}" class="btn btn-accent btn-lg">
+                            Get started <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                        <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg">Sign in</a>
+                    {% endif %}
+                </div>
+                <div class="hero-stats">
+                    <div>
+                        <strong>6</strong>
+                        <span>Issue categories</span>
+                    </div>
+                    <div>
+                        <strong>5</strong>
+                        <span>Status stages</span>
+                    </div>
+                    <div>
+                        <strong>24/7</strong>
+                        <span>Access to services</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="hero-panel">
+                    <div class="hero-panel-item">
+                        <span class="hero-panel-icon"><i class="bi bi-calendar-event"></i></span>
+                        <div>
+                            <strong>Community events</strong>
+                            <span>Find things to do around the city</span>
+                        </div>
+                    </div>
+                    <div class="hero-panel-item">
+                        <span class="hero-panel-icon"><i class="bi bi-tools"></i></span>
+                        <div>
+                            <strong>Service requests</strong>
+                            <span>Report roads, lighting, water, and more</span>
+                        </div>
+                    </div>
+                    <div class="hero-panel-item">
+                        <span class="hero-panel-icon"><i class="bi bi-graph-up-arrow"></i></span>
+                        <div>
+                            <strong>Live progress tracking</strong>
+                            <span>Follow your request through every stage</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container py-5">
+    <div class="text-center mb-4">
+        <span class="section-eyebrow">What you can do</span>
+        <h2 class="mt-1 mb-2">Built for everyday city life</h2>
+        <p class="text-muted mb-0">One account connects you to events, services, and updates.</p>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card feature-card">
+                <span class="feature-icon"><i class="bi bi-calendar-event"></i></span>
+                <h3>Browse events</h3>
+                <p>Explore upcoming community events by date, location, category, and price.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card feature-card">
+                <span class="feature-icon"><i class="bi bi-tools"></i></span>
+                <h3>Report issues</h3>
+                <p>Submit service requests for roads, lighting, sanitation, safety, water, or noise.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card feature-card">
+                <span class="feature-icon"><i class="bi bi-clipboard-check"></i></span>
+                <h3>Track progress</h3>
+                <p>See exactly where each request stands, from open to resolved and closed.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container pb-5">
+    <div class="cta-panel">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-8">
+                <h2>Ready to get involved?</h2>
+                <p>Create an account to report issues and stay connected with your city.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'submit_request' %}" class="btn btn-light btn-lg">Report an issue</a>
+                {% else %}
+                    <a href="{% url 'register' %}" class="btn btn-light btn-lg">Create account</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

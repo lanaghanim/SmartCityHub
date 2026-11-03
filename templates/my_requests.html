@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}My Requests — SmartCity Hub{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 pb-0">
+        <div>
+            <span class="section-eyebrow">Service requests</span>
+            <h1>My requests</h1>
+            <p>Track the status of every issue you have reported.</p>
+        </div>
+        <a href="{% url 'submit_request' %}" class="btn btn-accent">
+            <i class="bi bi-plus-lg me-1"></i>New request
+        </a>
+    </div>
+
+    <div class="d-grid gap-3 mt-4">
+        {% for req in requests %}
+            {% include 'partials/_request_card.html' with req=req %}
+        {% empty %}
+            <div class="empty-state">
+                <i class="bi bi-clipboard-x"></i>
+                <h3>You have not submitted any requests</h3>
+                <p>Report a city issue such as a pothole, broken streetlight, or water problem.</p>
+                <a href="{% url 'submit_request' %}" class="btn btn-accent">Submit a request</a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

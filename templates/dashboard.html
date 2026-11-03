@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard — SmartCity Hub{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 pb-0">
+        <div>
+            <span class="section-eyebrow">Dashboard</span>
+            <h1>Welcome back, {{ user.username }}</h1>
+            <p>Here is what is happening with your city and your requests.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'event_list' %}" class="btn btn-soft">
+                <i class="bi bi-calendar-event me-1"></i>Browse events
+            </a>
+            <a href="{% url 'submit_request' %}" class="btn btn-accent">
+                <i class="bi bi-plus-lg me-1"></i>Report an issue
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-3 mt-3">
+        <div class="col-sm-4">
+            <div class="card stat-card">
+                <span class="stat-icon"><i class="bi bi-inbox"></i></span>
+                <div>
+                    <span class="stat-value">{{ request_count }}</span>
+                    <span class="stat-label">Total requests</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card stat-card">
+                <span class="stat-icon"><i class="bi bi-hourglass-split"></i></span>
+                <div>
+                    <span class="stat-value">{{ open_count }}</span>
+                    <span class="stat-label">Open requests</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card stat-card">
+                <span class="stat-icon"><i class="bi bi-check2-circle"></i></span>
+                <div>
+                    <span class="stat-value">{{ resolved_count }}</span>
+                    <span class="stat-label">Resolved or closed</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-1">
+        <div class="col-lg-7">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h5 mb-0">My requests</h2>
+                <a href="{% url 'my_requests' %}" class="small fw-semibold text-decoration-none">View all</a>
+            </div>
+            <div class="d-grid gap-3">
+                {% for req in my_requests|slice:":4" %}
+                    {% include 'partials/_request_card.html' with req=req %}
+                {% empty %}
+                    <div class="empty-state">
+                        <i class="bi bi-clipboard-x"></i>
+                        <h3>No requests yet</h3>
+                        <p>Found something in your neighbourhood that needs attention?</p>
+                        <a href="{% url 'submit_request' %}" class="btn btn-accent">Submit your first request</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h5 mb-0">Upcoming events</h2>
+                <a href="{% url 'event_list' %}" class="small fw-semibold text-decoration-none">View all</a>
+            </div>
+            <div class="d-grid gap-3">
+                {% for event in events|slice:":3" %}
+                    {% include 'partials/_event_card.html' with event=event %}
+                {% empty %}
+                    <div class="empty-state">
+                        <i class="bi bi-calendar-x"></i>
+                        <h3>No events scheduled</h3>
+                        <p>Check back soon for community events near you.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

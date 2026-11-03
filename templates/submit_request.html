@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Report an Issue — SmartCity Hub{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="page-header">
+        <span class="section-eyebrow">Service request</span>
+        <h1>Report an issue</h1>
+        <p>Tell us what is wrong and where. Your request will be visible on your dashboard.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card form-card">
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        <div class="input-icon">
+                            <i class="bi bi-type"></i>
+                            <input type="text" id="title" name="title" class="form-control"
+                                   placeholder="e.g. Pothole on Main Street" maxlength="200" required>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="category" class="form-label">Category</label>
+                            <div class="input-icon">
+                                <i class="bi bi-tag"></i>
+                                <select id="category" name="category" class="form-select" required>
+                                    <option value="roads">Roads</option>
+                                    <option value="lighting">Lighting</option>
+                                    <option value="sanitation">Sanitation</option>
+                                    <option value="public_safety">Public Safety</option>
+                                    <option value="water">Water</option>
+                                    <option value="noise">Noise</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="location" class="form-label">Location</label>
+                            <div class="input-icon">
+                                <i class="bi bi-geo-alt"></i>
+                                <input type="text" id="location" name="location" class="form-control"
+                                       placeholder="Street, intersection, or landmark" maxlength="200" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea id="description" name="description" class="form-control" rows="5"
+                                  placeholder="Describe the issue, how long it has been there, and any safety concerns."
+                                  required></textarea>
+                        <div class="form-text">Be as specific as possible so the right team can respond.</div>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2 mt-4">
+                        <button type="submit" class="btn btn-accent">
+                            <i class="bi bi-send me-1"></i>Submit request
+                        </button>
+                        <a href="{% url 'my_requests' %}" class="btn btn-soft">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="side-card">
+                <h3><i class="bi bi-info-circle me-1"></i>Before you submit</h3>
+                <ul>
+                    <li>Choose the category that best matches the issue.</li>
+                    <li>Include a precise location so crews can find it.</li>
+                    <li>Add details about urgency or safety risks.</li>
+                    <li>You can track the status from your dashboard.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

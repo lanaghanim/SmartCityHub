@@ -1,0 +1,21 @@
+<div class="card event-card">
+    <div class="event-date-band">
+        <span class="month">{{ event.date|date:"M"|upper }}</span>
+        <span class="day">{{ event.date|date:"j" }}</span>
+        <span class="weekday">{{ event.date|date:"l" }}</span>
+    </div>
+    <div class="card-body">
+        <span class="category-chip">{{ event.category.name }}</span>
+        <h5 class="card-title mt-2">{{ event.title }}</h5>
+        <p class="card-text text-muted small mb-0">{{ event.description|truncatechars:110 }}</p>
+        <ul class="event-meta list-unstyled">
+            <li><i class="bi bi-geo-alt"></i>{{ event.location }}</li>
+            <li><i class="bi bi-clock"></i>{{ event.time|time:"g:i A" }}</li>
+            <li><i class="bi bi-people"></i>{{ event.capacity }} spots available</li>
+            <li>
+                <i class="bi bi-tag"></i>
+                {% if event.price > 0 %}${{ event.price|floatformat:2 }}{% else %}Free entry{% endif %}
+            </li>
+        </ul>
+    </div>
+</div>
