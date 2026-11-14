@@ -75,9 +75,11 @@ Django admin is configured for managing:
 
 ### User Interface
 
-- Responsive layout built on Bootstrap 5.3
-- Custom visual theme and reusable event/request cards
-- Status badges, statistics, empty states, and form validation
+- Responsive app shell with sidebar navigation and a sticky top bar
+- Global search across events and service requests
+- Notification dropdown and user profile menu
+- City dashboard with key statistics, recent requests, and upcoming events
+- Reusable event/request cards, status badges, and empty states
 
 ---
 
@@ -102,6 +104,7 @@ smartcityhub/
 ├── core/                     # Main application
 │   ├── migrations/           # Database migrations
 │   ├── admin.py              # Admin panel configuration
+│   ├── context_processors.py # Notification data for the app shell
 │   ├── models.py             # Database models
 │   ├── tests.py              # Test suite (placeholder)
 │   ├── urls.py               # Application URL routes
@@ -117,15 +120,18 @@ smartcityhub/
 ├── templates/
 │   ├── partials/
 │   │   ├── _event_card.html  # Reusable event card
-│   │   └── _request_card.html  # Reusable request card
-│   ├── base.html             # Shared layout, navbar, footer
+│   │   ├── _messages.html    # Flash message alerts
+│   │   ├── _request_card.html  # Reusable request card
+│   │   └── _sidebar_nav.html # Sidebar and offcanvas navigation
+│   ├── base.html             # Shared layouts, navbar, footer
 │   ├── home.html             # Landing page
 │   ├── login.html
 │   ├── register.html
 │   ├── dashboard.html
 │   ├── events.html
 │   ├── submit_request.html
-│   └── my_requests.html
+│   ├── my_requests.html
+│   └── search_results.html   # Global search results
 ├── db.sqlite3                # Development database
 ├── manage.py
 ├── requirements.txt
@@ -211,6 +217,7 @@ Visit: <http://127.0.0.1:8000/>
 | `/events/` | Browse community events | Login required |
 | `/submit-request/` | Submit a service request | Login required |
 | `/my-requests/` | View submitted requests | Login required |
+| `/search/` | Search events and service requests | Login required |
 | `/admin/` | Django admin panel | Staff / superuser |
 
 ---

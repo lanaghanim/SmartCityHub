@@ -1,0 +1,30 @@
+<div class="sidebar-brand">
+    <a href="{% url 'home' %}">
+        <span class="brand-mark"><i class="bi bi-buildings"></i></span>
+        <span>SmartCity <strong>Hub</strong></span>
+    </a>
+</div>
+
+<nav class="sidebar-nav" aria-label="Main navigation">
+    <a class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+       href="{% url 'dashboard' %}">
+        <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+    </a>
+    <a class="sidebar-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}"
+       href="{% url 'event_list' %}">
+        <i class="bi bi-calendar-event"></i><span>Events</span>
+    </a>
+    <a class="sidebar-link {% if request.resolver_match.url_name == 'submit_request' %}active{% endif %}"
+       href="{% url 'submit_request' %}">
+        <i class="bi bi-tools"></i><span>Report an Issue</span>
+    </a>
+    <a class="sidebar-link {% if request.resolver_match.url_name == 'my_requests' %}active{% endif %}"
+       href="{% url 'my_requests' %}">
+        <i class="bi bi-clipboard-check"></i><span>My Requests</span>
+    </a>
+    {% if user.is_staff %}
+        <a class="sidebar-link" href="{% url 'admin:index' %}">
+            <i class="bi bi-shield-lock"></i><span>Admin Panel</span>
+        </a>
+    {% endif %}
+</nav>

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Search — SmartCity Hub{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <div class="page-header">
+        <span class="section-eyebrow">Search</span>
+        <h1>Search results</h1>
+        {% if query %}
+            <p>Results for &ldquo;{{ query }}&rdquo;</p>
+        {% else %}
+            <p>Search for events, service requests, categories, or locations.</p>
+        {% endif %}
+    </div>
+
+    {% if query %}
+        <section class="mb-5">
+            <div class="panel-head">
+                <h2 class="h5 mb-0">
+                    Events
+                    <span class="badge bg-light text-dark border ms-1">{{ events|length }}</span>
+                </h2>
+                <a href="{% url 'event_list' %}" class="small fw-semibold">Browse all</a>
+            </div>
+            <div class="row g-4">
+                {% for event in events %}
+                    <div class="col-md-6 col-xl-4">
+                        {% include 'partials/_event_card.html' with event=event %}
+                    </div>
+                {% empty %}
+                    <div class="col-12">
+                        <div class="empty-state empty-state-sm">
+                            <i class="bi bi-calendar-x"></i>
+                            <h3>No matching events</h3>
+                            <p>Try a different keyword or browse all community events.</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section>
+            <div class="panel-head">
+                <h2 class="h5 mb-0">
+                    Service requests
+                    <span class="badge bg-light text-dark border ms-1">{{ service_requests|length }}</span>
+                </h2>
+                <a href="{% url 'my_requests' %}" class="small fw-semibold">My requests</a>
+            </div>
+            <div class="d-grid gap-3">
+                {% for req in service_requests %}
+                    {% include 'partials/_request_card.html' with req=req %}
+                {% empty %}
+                    <div class="empty-state empty-state-sm">
+                        <i class="bi bi-clipboard-x"></i>
+                        <h3>No matching requests</h3>
+                        <p>No service requests matched this search.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% else %}
+        <div class="empty-state">
+            <i class="bi bi-search"></i>
+            <h3>Start a search</h3>
+            <p>Use the search bar above to find events or your service requests.</p>
+            <a href="{% url 'dashboard' %}" class="btn btn-soft">Back to dashboard</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

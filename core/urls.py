@@ -10,4 +10,5 @@ urlpatterns = [
     path('events/', views.event_list, name='event_list'),
     path('submit-request/', views.submit_request, name='submit_request'),
     path('my-requests/', views.my_requests, name='my_requests'),
+    path('search/', views.search, name='search'),
 ]

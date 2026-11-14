@@ -1,10 +1,10 @@
-from django.shortcuts import render
-
-# Create your views here.
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from django.shortcuts import redirect, render
+from django.utils import timezone
+
 from .models import Event, ServiceRequest, User
 
 
@@ -61,11 +61,14 @@ def logout_view(request):
 def dashboard(request):
     user = request.user
     my_requests = ServiceRequest.objects.filter(submitted_by=user).order_by('-created_at')
-    events = Event.objects.all().order_by('date')
+    events = Event.objects.filter(date__gte=timezone.localdate()).order_by('date')
+    request_count = my_requests.count()
+
     return render(request, 'dashboard.html', {
         'my_requests': my_requests,
         'events': events,
-        'request_count': my_requests.count(),
+        'event_count': events.count(),
+        'request_count': request_count,
         'open_count': my_requests.filter(status='open').count(),
         'resolved_count': my_requests.filter(status__in=['resolved', 'closed']).count(),
     })
@@ -73,7 +76,7 @@ def dashboard(request):
 
 @login_required
 def event_list(request):
-    events = Event.objects.all().order_by('date')
+    events = Event.objects.filter(date__gte=timezone.localdate()).order_by('date')
     return render(request, 'events.html', {'events': events})
 
 
@@ -102,3 +105,38 @@ def submit_request(request):
 def my_requests(request):
     requests = ServiceRequest.objects.filter(submitted_by=request.user).order_by('-created_at')
     return render(request, 'my_requests.html', {'requests': requests})
+
+
+@login_required
+def search(request):
+    query = request.GET.get('q', '').strip()
+    events = Event.objects.none()
+    service_requests = ServiceRequest.objects.none()
+
+    if query:
+        events = Event.objects.select_related('category').filter(
+            Q(title__icontains=query)
+            | Q(description__icontains=query)
+            | Q(location__icontains=query)
+            | Q(category__name__icontains=query)
+        ).order_by('date')
+
+        request_queryset = (
+            ServiceRequest.objects.all()
+            if request.user.is_staff
+            else ServiceRequest.objects.filter(submitted_by=request.user)
+        )
+        normalized_query = query.replace(' ', '_')
+        service_requests = request_queryset.filter(
+            Q(title__icontains=query)
+            | Q(description__icontains=query)
+            | Q(location__icontains=query)
+            | Q(category__icontains=normalized_query)
+            | Q(status__icontains=normalized_query)
+        ).order_by('-created_at')
+
+    return render(request, 'search_results.html', {
+        'query': query,
+        'events': events,
+        'service_requests': service_requests,
+    })
