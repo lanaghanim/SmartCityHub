@@ -1,15 +1,19 @@
 # SmartCity Hub
 
+> **Phase III, Part 2 submission:** Start here - [PHASE3_PART2.md](PHASE3_PART2.md)
+> contains the new features, where to find them, and how to test them.
+
 Community Services & Urban Engagement Platform built with Django.
 
-**Course:** CSE 460 – Software Engineering, Fall 2026  
-**Phase:** III, Part I (approximately 20% of the complete project)  
-**Author:** Lana Ghanim
+- **Course:** CSE 460 – Software Engineering, Fall 2026
+- **Phase:** III, Part II
+- **Author:** Lana Ghanim
 
 ---
 
 ## Table of Contents
 
+- [Phase III, Part 2 Features](PHASE3_PART2.md)
 - [Overview](#overview)
 - [Features](#features)
 - [Technology Stack](#technology-stack)
@@ -48,6 +52,8 @@ This part builds on the Part 1 features with three new features:
 
 The sections below explain how to run the project, use the new features, and
 understand the updated data model.
+
+For the grader-friendly walkthrough, open **[PHASE3_PART2.md](PHASE3_PART2.md)**.
 
 ---
 
