@@ -31,7 +31,23 @@ SmartCity Hub is a web platform that connects citizens with city services, commu
 events, and local government initiatives. Citizens can browse upcoming events, submit
 service requests for city issues, and track each request from submission to resolution.
 
-This repository contains the **Phase III, Part I** implementation.
+This repository contains the **Phase III, Part II** implementation.
+
+### What Was Added in Part 2
+
+This part builds on the Part 1 features with three new features:
+
+- **Event registration** — citizens can open an event, see how many spots are
+  filled, and register with one click. Registering twice is blocked, and events
+  stop accepting registrations when they are full.
+- **Event filtering** — the Events page has a category dropdown so citizens can
+  quickly narrow the list to the kind of event they want.
+- **Admin dashboard** — city administrators and superusers get a dashboard where
+  they can see every service request, update its status, and review how many
+  people registered for each event.
+
+The sections below explain how to run the project, use the new features, and
+understand the updated data model.
 
 ---
 
@@ -47,6 +63,11 @@ This repository contains the **Phase III, Part I** implementation.
 ### Community Events
 
 - Browse upcoming community events
+- Filter events by category from the Events page
+- Open an event detail page with the full description, date, time, location,
+  capacity, price, and current registration count
+- Register for an event as a signed-in citizen
+- Duplicate registrations and full-capacity registrations are handled safely
 - Event cards display title, date, time, location, category, capacity, and price
 - Admin management of events through the Django admin site
 
@@ -65,13 +86,20 @@ This repository contains the **Phase III, Part I** implementation.
 
 ### Administrative Panel
 
-Django admin is configured for managing:
+- Custom admin dashboard at `/admin-dashboard/` for city administrators and
+  superusers
+- View every service request, who submitted it, and its current status
+- Update a service request status without opening the Django admin site
+- Review all events and their registration counts
+
+Django admin is also configured for managing:
 
 - Users
 - Categories
 - Events
 - Service Requests
 - Notifications
+- Event Registrations
 
 ### User Interface
 
@@ -129,8 +157,10 @@ smartcityhub/
 │   ├── register.html
 │   ├── dashboard.html
 │   ├── events.html
+│   ├── event_detail.html     # Event details and registration
 │   ├── submit_request.html
 │   ├── my_requests.html
+│   ├── admin_dashboard.html  # Admin service request management
 │   └── search_results.html   # Global search results
 ├── db.sqlite3                # Development database
 ├── manage.py
@@ -215,8 +245,11 @@ Visit: <http://127.0.0.1:8000/>
 | `/logout/` | Logout | Authenticated |
 | `/dashboard/` | User dashboard | Login required |
 | `/events/` | Browse community events | Login required |
+| `/events/<id>/` | Event details | Login required |
+| `/events/<id>/register/` | Register for an event | Login required |
 | `/submit-request/` | Submit a service request | Login required |
 | `/my-requests/` | View submitted requests | Login required |
+| `/admin-dashboard/` | Custom admin dashboard | City admin / superuser |
 | `/search/` | Search events and service requests | Login required |
 | `/admin/` | Django admin panel | Staff / superuser |
 
@@ -228,15 +261,21 @@ Visit: <http://127.0.0.1:8000/>
 
 1. Register an account and sign in.
 2. Browse community events on the **Events** page.
-3. Submit service requests for city issues from **Report Issue**.
-4. Follow each request's status on **My Requests** and the **Dashboard**.
+3. Use the category dropdown to filter events.
+4. Open an event to see its details and click **Register for this event**.
+5. Submit service requests for city issues from **Report Issue**.
+6. Follow each request's status on **My Requests** and the **Dashboard**.
 
 ### As an Administrator
 
-1. Sign in to `/admin/` with a superuser account.
-2. Create event categories and community events.
-3. Review, assign, and update service requests.
-4. Manage users and notifications.
+1. Sign in with an account whose role is **City Administrator**, or with a
+   superuser account.
+2. Open **Admin Dashboard** from the sidebar or profile menu.
+3. Review all service requests and update their status with the dropdown and
+   **Update** button.
+4. Review all events and see how many citizens registered for each one.
+5. Use `/admin/` when you need full Django admin access for users, categories,
+   events, notifications, and registrations.
 
 ---
 
@@ -248,6 +287,7 @@ Visit: <http://127.0.0.1:8000/>
 | `Category` | Event category (name and description) |
 | `Event` | Community event details, organizer, capacity, and price |
 | `ServiceRequest` | Citizen issue report with category, location, status, and assignee |
+| `EventRegistration` | Links a citizen to an event and prevents duplicate registrations |
 | `Notification` | Notification record for a recipient (admin-managed in this phase) |
 
 The custom user model supports five roles: Citizen, City Administrator, Department
@@ -264,18 +304,26 @@ Manager, City Worker, and Event Organizer.
 - Static assets are served by Django's development server from `static/`.
   No `collectstatic` step is required for local development.
 - Email uses Django's console backend for development.
-- `Notification` and event-registration workflows are scheduled for later phases.
+- Event registration is implemented in this part. Notification delivery and
+  observer-based notifications are scheduled for later phases.
 
 ---
 
 ## Roadmap
 
-### Phase III, Part II (due November 14)
+### Phase III, Part II (current)
 
-- Full event registration system
+Implemented in this part:
+
+- Event registration system
+- Event filtering by category
+- Custom admin dashboard for service request status updates
+
+Planned for later:
+
 - Observer pattern for notifications
 - Factory pattern for service request types
-- Admin dashboard with assignment features
+- Admin event creation and editing from the custom dashboard
 
 ### Phase III, Part III (due November 21)
 
