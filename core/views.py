@@ -2,10 +2,10 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from .models import Event, ServiceRequest, User
+from .models import Category, Event, EventRegistration, ServiceRequest, User
 
 
 def home(request):
@@ -76,8 +76,49 @@ def dashboard(request):
 
 @login_required
 def event_list(request):
-    events = Event.objects.filter(date__gte=timezone.localdate()).order_by('date')
-    return render(request, 'events.html', {'events': events})
+    events = Event.objects.filter(date__gte=timezone.localdate()).select_related('category').order_by('date')
+    category_filter = request.GET.get('category', '').strip()
+    if category_filter:
+        events = events.filter(category__name=category_filter)
+
+    return render(request, 'events.html', {
+        'events': events,
+        'categories': Category.objects.order_by('name'),
+        'selected_category': category_filter,
+    })
+
+
+@login_required
+def event_detail(request, event_id):
+    event = get_object_or_404(Event.objects.select_related('category'), id=event_id)
+    is_registered = EventRegistration.objects.filter(event=event, citizen=request.user).exists()
+    registrations_count = event.registrations.count()
+
+    return render(request, 'event_detail.html', {
+        'event': event,
+        'is_registered': is_registered,
+        'registrations_count': registrations_count,
+    })
+
+
+@login_required
+def register_for_event(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+
+    if event.registrations.count() >= event.capacity:
+        messages.error(request, 'This event has reached full capacity.')
+        return redirect('event_detail', event_id=event.id)
+
+    registration, created = EventRegistration.objects.get_or_create(
+        event=event,
+        citizen=request.user,
+    )
+    if created:
+        messages.success(request, f'You are registered for {event.title}!')
+    else:
+        messages.warning(request, 'You are already registered for this event.')
+
+    return redirect('event_detail', event_id=event.id)
 
 
 @login_required

@@ -10,6 +10,23 @@
         <p>Discover what is happening around the city and find something to take part in.</p>
     </div>
 
+    <form method="get" class="event-filter">
+        <div>
+            <label for="category" class="form-label small fw-semibold text-muted">Filter by category</label>
+            <select name="category" id="category" class="form-select" onchange="this.form.submit()">
+                <option value="">All categories</option>
+                {% for category in categories %}
+                    <option value="{{ category.name }}" {% if selected_category == category.name %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        {% if selected_category %}
+            <a href="{% url 'event_list' %}" class="btn btn-soft">Clear filter</a>
+        {% endif %}
+    </form>
+
     <div class="row g-4">
         {% for event in events %}
             <div class="col-md-6 col-xl-4">
