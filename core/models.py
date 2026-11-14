@@ -85,3 +85,20 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Notification for {self.recipient.username}"
+
+
+class EventRegistration(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='registrations')
+    citizen = models.ForeignKey(User, on_delete=models.CASCADE, related_name='event_registrations')
+    registered_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['event', 'citizen'],
+                name='unique_event_registration',
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.citizen.username} - {self.event.title}"
