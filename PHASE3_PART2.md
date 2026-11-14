@@ -19,6 +19,22 @@ them.
 
 ---
 
+## Feature Screenshots
+
+### Event filtering
+![Events page with the category filter](<project_ui/citizens events page.png>)
+
+### Event registration
+![Event details after successful registration](<project_ui/event details you are registered.png>)
+
+### Admin access
+![Admin dashboard navigation and admin links](<project_ui/admin dashboard.png>)
+
+### Django admin panel
+![Django admin panel with Event Registrations](<project_ui/admin panel.png>)
+
+---
+
 ## 1. Event Registration
 
 Citizens can now open an event detail page and register for it.

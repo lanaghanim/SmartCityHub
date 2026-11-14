@@ -54,6 +54,8 @@ The sections below explain how to run the project, use the new features, and
 understand the updated data model.
 
 For the grader-friendly walkthrough, open **[PHASE3_PART2.md](PHASE3_PART2.md)**.
+Screenshots of each feature are included in the
+[Feature Screenshots](PHASE3_PART2.md#feature-screenshots) section.
 
 ---
 
