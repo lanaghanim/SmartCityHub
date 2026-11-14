@@ -90,7 +90,7 @@ def event_list(request):
 
 @login_required
 def event_detail(request, event_id):
-    event = get_object_or_404(Event.objects.select_related('category'), id=event_id)
+    event = get_object_or_404(Event.objects.select_related('category', 'organizer'), id=event_id)
     is_registered = EventRegistration.objects.filter(event=event, citizen=request.user).exists()
     registrations_count = event.registrations.count()
 
@@ -104,6 +104,10 @@ def event_detail(request, event_id):
 @login_required
 def register_for_event(request, event_id):
     event = get_object_or_404(Event, id=event_id)
+
+    if event.date < timezone.localdate():
+        messages.error(request, 'This event has already taken place.')
+        return redirect('event_detail', event_id=event.id)
 
     if event.registrations.count() >= event.capacity:
         messages.error(request, 'This event has reached full capacity.')
