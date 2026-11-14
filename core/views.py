@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
@@ -180,4 +180,39 @@ def search(request):
         'query': query,
         'events': events,
         'service_requests': service_requests,
+    })
+
+
+@login_required
+def admin_dashboard(request):
+    if request.user.role != 'admin' and not request.user.is_superuser:
+        messages.error(request, 'Access denied. Admins only.')
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        request_id = request.POST.get('request_id')
+        new_status = request.POST.get('status')
+        valid_statuses = {value for value, _ in ServiceRequest.STATUS_CHOICES}
+
+        if request_id and new_status in valid_statuses:
+            service_request = get_object_or_404(ServiceRequest, id=request_id)
+            service_request.status = new_status
+            service_request.save(update_fields=['status', 'updated_at'])
+            messages.success(request, f'Request #{request_id} updated to {service_request.get_status_display()}.')
+        else:
+            messages.error(request, 'Could not update the service request.')
+
+        return redirect('admin_dashboard')
+
+    all_requests = ServiceRequest.objects.select_related('submitted_by').order_by('-created_at')
+    all_events = (
+        Event.objects.select_related('category')
+        .annotate(registration_count=Count('registrations'))
+        .order_by('-date')
+    )
+
+    return render(request, 'admin_dashboard.html', {
+        'all_requests': all_requests,
+        'all_events': all_events,
+        'status_choices': ServiceRequest.STATUS_CHOICES,
     })

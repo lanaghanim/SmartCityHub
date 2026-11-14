@@ -12,5 +12,6 @@ urlpatterns = [
     path('events/<int:event_id>/register/', views.register_for_event, name='register_for_event'),
     path('submit-request/', views.submit_request, name='submit_request'),
     path('my-requests/', views.my_requests, name='my_requests'),
+    path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('search/', views.search, name='search'),
 ]

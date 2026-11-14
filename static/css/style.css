@@ -539,6 +539,10 @@ a {
     min-width: 220px;
 }
 
+.admin-table .form-select {
+    min-width: 150px;
+}
+
 /* ---------- Request card ---------- */
 
 .request-card .card-body {
