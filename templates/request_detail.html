@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Request #{{ service_request.id }} — SmartCity Hub{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 pb-0">
+        <div>
+            <span class="section-eyebrow">Service request #{{ service_request.id }}</span>
+            <h1>{{ service_request.title }}</h1>
+            <p>{{ service_request.get_category_display }} · {{ service_request.location }}</p>
+        </div>
+        {% if user.role == 'manager' or user.role == 'admin' or user.is_superuser %}
+            <a href="{% url 'department_dashboard' %}" class="btn btn-soft">
+                <i class="bi bi-arrow-left me-1"></i>Back to departments
+            </a>
+        {% else %}
+            <a href="{% url 'my_requests' %}" class="btn btn-soft">
+                <i class="bi bi-arrow-left me-1"></i>Back to my requests
+            </a>
+        {% endif %}
+    </div>
+
+    <div class="row g-4 mt-4">
+        <div class="col-lg-8">
+            <div class="card panel-card">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                        <h2 class="h5 mb-0">Progress</h2>
+                        <span class="badge status-badge status-{{ service_request.status }}">
+                            {{ service_request.get_status_display }}
+                        </span>
+                    </div>
+
+                    <div class="progress request-progress mt-3" role="progressbar"
+                         aria-label="Request progress" aria-valuenow="{{ service_request.progress_percent }}"
+                         aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar progress-status-{{ service_request.status }}"
+                             style="width: {{ service_request.progress_percent }}%"></div>
+                    </div>
+
+                    <ol class="request-timeline mt-4">
+                        {% for step in status_steps %}
+                            <li class="{% if step.done %}is-done{% endif %} {% if step.current %}is-current{% endif %}">
+                                <span class="timeline-dot">
+                                    <i class="bi {% if step.done %}bi-check-lg{% else %}bi-circle{% endif %}"></i>
+                                </span>
+                                <span class="timeline-label">{{ step.label }}</span>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+
+            <div class="card panel-card mt-4">
+                <div class="card-body">
+                    <h2 class="h5">Description</h2>
+                    <p class="text-muted mb-0">{{ service_request.description|linebreaksbr }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card panel-card h-100">
+                <div class="card-body">
+                    <h2 class="h6 text-uppercase text-muted mb-3">Request details</h2>
+                    <dl class="request-details">
+                        <dt>Department</dt>
+                        <dd>
+                            {% if service_request.department %}
+                                {{ service_request.department.name }}
+                            {% else %}
+                                <span class="text-muted">Awaiting assignment</span>
+                            {% endif %}
+                        </dd>
+
+                        <dt>Assigned to</dt>
+                        <dd>
+                            {% if service_request.assigned_to %}
+                                {{ service_request.assigned_to.username }}
+                            {% else %}
+                                <span class="text-muted">Not assigned yet</span>
+                            {% endif %}
+                        </dd>
+
+                        <dt>Submitted by</dt>
+                        <dd>{{ service_request.submitted_by.username }}</dd>
+
+                        <dt>Location</dt>
+                        <dd>{{ service_request.location }}</dd>
+
+                        <dt>Submitted</dt>
+                        <dd>{{ service_request.created_at|date:"M j, Y · g:i A" }}</dd>
+
+                        <dt>Last updated</dt>
+                        <dd>{{ service_request.updated_at|date:"M j, Y · g:i A" }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

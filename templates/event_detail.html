@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ event.title }} — SmartCity Hub{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 pb-0">
+        <div>
+            <span class="section-eyebrow">{{ event.category.name }}</span>
+            <h1>{{ event.title }}</h1>
+            <p>{{ event.date|date:"l, F j, Y" }} · {{ event.time|time:"g:i A" }} · {{ event.location }}</p>
+        </div>
+        <a href="{% url 'event_list' %}" class="btn btn-soft">
+            <i class="bi bi-arrow-left me-1"></i>Back to events
+        </a>
+    </div>
+
+    <div class="row g-4 mt-4">
+        <div class="col-lg-8">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="h5">About this event</h2>
+                    <p class="text-muted mb-0">{{ event.description|linebreaksbr }}</p>
+
+                    <ul class="event-meta list-unstyled">
+                        <li><i class="bi bi-geo-alt"></i>{{ event.location }}</li>
+                        <li><i class="bi bi-calendar-event"></i>{{ event.date|date:"l, F j, Y" }}</li>
+                        <li><i class="bi bi-clock"></i>{{ event.time|time:"g:i A" }}</li>
+                        <li>
+                            <i class="bi bi-tag"></i>
+                            {% if event.price > 0 %}${{ event.price|floatformat:2 }}{% else %}Free entry{% endif %}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card panel-card h-100">
+                <div class="card-body">
+                    <h2 class="h6 text-uppercase text-muted mb-3">Registration</h2>
+                    <p class="mb-1">
+                        <strong>{{ registrations_count }}</strong>
+                        <span class="text-muted">of {{ event.capacity }} spots filled</span>
+                    </p>
+                    <p class="small text-muted">
+                        Organized by {{ event.organizer.username }}
+                    </p>
+
+                    {% if is_registered %}
+                        <span class="badge status-badge status-resolved">You are registered</span>
+                    {% elif registrations_count >= event.capacity %}
+                        <span class="badge status-badge status-closed">Event full</span>
+                    {% else %}
+                        <a href="{% url 'register_for_event' event.id %}" class="btn btn-accent w-100">
+                            <i class="bi bi-check2-circle me-1"></i>Register for this event
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

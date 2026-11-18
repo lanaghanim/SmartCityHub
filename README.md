@@ -1,15 +1,22 @@
 # SmartCity Hub
 
+> **Phase III, Part 3 submission:** Start here - [PHASE3_PART3.md](PHASE3_PART3.md)
+> contains the new features, where to find them, and how to test them.
+>
+> Looking for Part 2? See [PHASE3_PART2.md](PHASE3_PART2.md).
+
 Community Services & Urban Engagement Platform built with Django.
 
-**Course:** CSE 460 – Software Engineering, Fall 2026  
-**Phase:** III, Part I (approximately 20% of the complete project)  
-**Author:** Lana Ghanim
+- **Course:** CSE 460 – Software Engineering, Fall 2026
+- **Phase:** III, Part III
+- **Author:** Lana Ghanim
 
 ---
 
 ## Table of Contents
 
+- [Phase III, Part 3 Features](PHASE3_PART3.md)
+- [Phase III, Part 2 Features](PHASE3_PART2.md)
 - [Overview](#overview)
 - [Features](#features)
 - [Technology Stack](#technology-stack)
@@ -31,7 +38,33 @@ SmartCity Hub is a web platform that connects citizens with city services, commu
 events, and local government initiatives. Citizens can browse upcoming events, submit
 service requests for city issues, and track each request from submission to resolution.
 
-This repository contains the **Phase III, Part I** implementation.
+This repository contains the **Phase III, Part III** implementation.
+
+### What Was Added in Part 3
+
+This part builds on Parts 1 and 2 with event discovery, request tracking, and
+department operations:
+
+- **Event discovery** — the Events page now supports keyword search plus category,
+  exact-date, location, free/paid, and popularity filters. Filters can be combined
+  and are preserved in the URL so results can be shared.
+- **Service request progress tracking** — citizens can open any request from
+  **My Requests** or the dashboard and see a status timeline, progress bar,
+  assigned department, assignee, and last update time. Access is limited to the
+  request owner, assigned worker, department managers, and administrators.
+- **Department operations** — a new `Department` model and `ServiceRequest.department`
+  field let department managers route requests to a department and update the
+  request status from a dedicated dashboard.
+- **Admin tooling** — the Django admin user form now exposes the custom `role` and
+  `phone_number` fields, so an administrator can promote a user to Department
+  Manager. Departments are registered in the Django admin site.
+- **Regression tests** — `core/tests.py` now contains 13 tests covering the new
+  event filters, request progress access rules, and department dashboard updates.
+
+The sections below explain how to run the project, use the new features, and
+understand the updated data model.
+
+For the grader-friendly walkthrough, open **[PHASE3_PART3.md](PHASE3_PART3.md)**.
 
 ---
 
@@ -47,6 +80,12 @@ This repository contains the **Phase III, Part I** implementation.
 ### Community Events
 
 - Browse upcoming community events
+- Search events by keyword and filter by category, date, location, and free/paid
+  price, then sort by date or popularity
+- Open an event detail page with the full description, date, time, location,
+  capacity, price, and current registration count
+- Register for an event as a signed-in citizen
+- Duplicate registrations and full-capacity registrations are handled safely
 - Event cards display title, date, time, location, category, capacity, and price
 - Admin management of events through the Django admin site
 
@@ -61,17 +100,30 @@ This repository contains the **Phase III, Part I** implementation.
   - Water
   - Noise
 - Track request status through five stages: Open, Assigned, In Progress, Resolved, Closed
+- Open any request to see a progress bar, status timeline, assigned department, and
+  assignee
 - Dedicated **My Requests** page for each citizen
 
 ### Administrative Panel
 
-Django admin is configured for managing:
+- Custom admin dashboard at `/admin-dashboard/` for city administrators and
+  superusers
+- View every service request, who submitted it, and its current status
+- Update a service request status without opening the Django admin site
+- Review all events and their registration counts
+- Route requests to a department from the **Department Dashboard**
+- Department managers can update request status and department assignments
+- Administrators can manage departments through the Django admin site
 
-- Users
+Django admin is also configured for managing:
+
+- Users (including the custom role and phone number fields)
+- Departments
 - Categories
 - Events
 - Service Requests
 - Notifications
+- Event Registrations
 
 ### User Interface
 
@@ -79,7 +131,9 @@ Django admin is configured for managing:
 - Global search across events and service requests
 - Notification dropdown and user profile menu
 - City dashboard with key statistics, recent requests, and upcoming events
-- Reusable event/request cards, status badges, and empty states
+- Reusable event/request cards, status badges, progress bars, and empty states
+- Combined event discovery filter panel with keyword, category, date, location,
+  price, and sort controls
 
 ---
 
@@ -106,7 +160,7 @@ smartcityhub/
 │   ├── admin.py              # Admin panel configuration
 │   ├── context_processors.py # Notification data for the app shell
 │   ├── models.py             # Database models
-│   ├── tests.py              # Test suite (placeholder)
+│   ├── tests.py              # Part 3 regression tests
 │   ├── urls.py               # Application URL routes
 │   └── views.py              # View logic
 ├── smartcityhub/             # Project configuration
@@ -129,12 +183,18 @@ smartcityhub/
 │   ├── register.html
 │   ├── dashboard.html
 │   ├── events.html
+│   ├── event_detail.html     # Event details and registration
 │   ├── submit_request.html
 │   ├── my_requests.html
+│   ├── admin_dashboard.html  # Admin service request management
+│   ├── department_dashboard.html  # Manager request routing and status updates
+│   ├── request_detail.html   # Citizen-facing request progress page
 │   └── search_results.html   # Global search results
 ├── db.sqlite3                # Development database
 ├── manage.py
 ├── requirements.txt
+├── PHASE3_PART2.md           # Part 2 feature guide
+├── PHASE3_PART3.md           # Part 3 feature guide
 └── README.md
 ```
 
@@ -215,8 +275,13 @@ Visit: <http://127.0.0.1:8000/>
 | `/logout/` | Logout | Authenticated |
 | `/dashboard/` | User dashboard | Login required |
 | `/events/` | Browse community events | Login required |
+| `/events/<id>/` | Event details | Login required |
+| `/events/<id>/register/` | Register for an event | Login required |
 | `/submit-request/` | Submit a service request | Login required |
 | `/my-requests/` | View submitted requests | Login required |
+| `/requests/<id>/` | Request progress and details | Owner / assigned worker / manager / admin |
+| `/admin-dashboard/` | Custom admin dashboard | City admin / superuser |
+| `/department-dashboard/` | Department request routing and status updates | Department manager / city admin / superuser |
 | `/search/` | Search events and service requests | Login required |
 | `/admin/` | Django admin panel | Staff / superuser |
 
@@ -228,15 +293,33 @@ Visit: <http://127.0.0.1:8000/>
 
 1. Register an account and sign in.
 2. Browse community events on the **Events** page.
-3. Submit service requests for city issues from **Report Issue**.
-4. Follow each request's status on **My Requests** and the **Dashboard**.
+3. Search by keyword and combine category, date, location, price, and popularity
+   filters.
+4. Open an event to see its details and click **Register for this event**.
+5. Submit service requests for city issues from **Report Issue**.
+6. Follow each request's status on **My Requests**, then click **View progress** for
+   the full timeline and department assignment.
 
 ### As an Administrator
 
-1. Sign in to `/admin/` with a superuser account.
-2. Create event categories and community events.
-3. Review, assign, and update service requests.
-4. Manage users and notifications.
+1. Sign in with an account whose role is **City Administrator**, or with a
+   superuser account.
+2. Open **Admin Dashboard** from the sidebar or profile menu.
+3. Review all service requests and update their status with the dropdown and
+   **Update** button.
+4. Review all events and see how many citizens registered for each one.
+5. Open **Department Dashboard** to route requests to a department and update their
+   status.
+6. Use `/admin/` when you need full Django admin access for users, departments,
+   categories, events, notifications, and registrations.
+
+### As a Department Manager
+
+1. Sign in with an account whose role is **Department Manager**.
+2. Open **Departments** from the sidebar or profile menu.
+3. Choose the department that should handle a request and set its status.
+4. Click **Update** to save the routing and status change.
+5. Open a request title to review the citizen-facing progress page.
 
 ---
 
@@ -246,8 +329,10 @@ Visit: <http://127.0.0.1:8000/>
 | --- | --- |
 | `User` | Custom authentication user with `role` and `phone_number` fields |
 | `Category` | Event category (name and description) |
+| `Department` | City department with name, description, contact email, and creation date |
 | `Event` | Community event details, organizer, capacity, and price |
-| `ServiceRequest` | Citizen issue report with category, location, status, and assignee |
+| `ServiceRequest` | Citizen issue report with category, department, location, status, and assignee |
+| `EventRegistration` | Links a citizen to an event and prevents duplicate registrations |
 | `Notification` | Notification record for a recipient (admin-managed in this phase) |
 
 The custom user model supports five roles: Citizen, City Administrator, Department
@@ -264,26 +349,41 @@ Manager, City Worker, and Event Organizer.
 - Static assets are served by Django's development server from `static/`.
   No `collectstatic` step is required for local development.
 - Email uses Django's console backend for development.
-- `Notification` and event-registration workflows are scheduled for later phases.
+- Event registration, event discovery, request progress tracking, and department
+  routing are implemented. Notification delivery and observer-based notifications
+  are scheduled for later phases.
+- Run `python manage.py test` to execute the Part 3 regression suite.
 
 ---
 
 ## Roadmap
 
-### Phase III, Part II (due November 14)
+### Phase III, Part II (complete)
 
-- Full event registration system
+- Event registration system
+- Event filtering by category
+- Custom admin dashboard for service request status updates
+
+### Phase III, Part III (current)
+
+Implemented in this part:
+
+- Event keyword search and combined category, date, location, price, and
+  popularity filters
+- Service request progress page with status timeline and access control
+- Department model and request-to-department routing
+- Department manager dashboard for routing and status updates
+- Custom user admin fields for assigning the Department Manager role
+- 13 regression tests for the new behavior
+
+Planned for later:
+
 - Observer pattern for notifications
 - Factory pattern for service request types
-- Admin dashboard with assignment features
-
-### Phase III, Part III (due November 21)
-
-- Complete project with all features
+- Admin event creation and editing from the custom dashboard
 - Analytics and reporting
 - Content moderation
 - UI/UX polish
-- Comprehensive testing
 
 ### Phase IV (due November 30)
 

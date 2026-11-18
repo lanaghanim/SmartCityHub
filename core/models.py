@@ -31,6 +31,19 @@ class Category(models.Model):
         verbose_name_plural = "Categories"
 
 
+class Department(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    contact_email = models.EmailField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Departments"
+
+    def __str__(self):
+        return self.name
+
+
 class Event(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
@@ -66,12 +79,25 @@ class ServiceRequest(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+    department = models.ForeignKey(
+        Department,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='service_requests',
+    )
     location = models.CharField(max_length=200)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
     submitted_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='service_requests')
     assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_requests')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def progress_percent(self):
+        statuses = [value for value, _ in self.STATUS_CHOICES]
+        index = statuses.index(self.status) if self.status in statuses else 0
+        return round((index + 1) / len(statuses) * 100)
 
     def __str__(self):
         return f"{self.title} - {self.status}"
@@ -85,3 +111,20 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Notification for {self.recipient.username}"
+
+
+class EventRegistration(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='registrations')
+    citizen = models.ForeignKey(User, on_delete=models.CASCADE, related_name='event_registrations')
+    registered_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['event', 'citizen'],
+                name='unique_event_registration',
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.citizen.username} - {self.event.title}"

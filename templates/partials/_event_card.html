@@ -11,11 +11,14 @@
         <ul class="event-meta list-unstyled">
             <li><i class="bi bi-geo-alt"></i>{{ event.location }}</li>
             <li><i class="bi bi-clock"></i>{{ event.time|time:"g:i A" }}</li>
-            <li><i class="bi bi-people"></i>{{ event.capacity }} spots available</li>
+            <li><i class="bi bi-people"></i>{{ event.registration_count|default:0 }} / {{ event.capacity }} registered</li>
             <li>
                 <i class="bi bi-tag"></i>
                 {% if event.price > 0 %}${{ event.price|floatformat:2 }}{% else %}Free entry{% endif %}
             </li>
         </ul>
+        <a href="{% url 'event_detail' event.id %}" class="btn btn-soft btn-sm mt-3">
+            View details<i class="bi bi-arrow-right ms-1"></i>
+        </a>
     </div>
 </div>

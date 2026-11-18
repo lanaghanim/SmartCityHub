@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Department Dashboard â€” SmartCity Hub{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3">
+        <div>
+            <span class="section-eyebrow">Department operations</span>
+            <h1>Department dashboard</h1>
+            <p>Route service requests to the right department and keep citizens updated on progress.</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            {% if user.role == 'admin' or user.is_superuser %}
+                <a href="{% url 'admin:core_department_changelist' %}" class="btn btn-soft">
+                    <i class="bi bi-building me-1"></i>Manage departments
+                </a>
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-soft">
+                    <i class="bi bi-shield-check me-1"></i>Admin dashboard
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card panel-card">
+        <div class="card-body">
+            <div class="panel-head">
+                <h2 class="h5 mb-0">All service requests</h2>
+                <span class="badge bg-light text-dark border">{{ all_requests|length }}</span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 admin-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Request</th>
+                            <th scope="col">Submitted by</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Department</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Update</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in all_requests %}
+                            <tr>
+                                <td class="text-muted">#{{ req.id }}</td>
+                                <td>
+                                    <a href="{% url 'request_detail' req.id %}" class="fw-semibold">{{ req.title }}</a>
+                                    <div class="small text-muted">{{ req.location }}</div>
+                                </td>
+                                <td>{{ req.submitted_by.username }}</td>
+                                <td>{{ req.get_category_display }}</td>
+                                <td>
+                                    {% if req.department %}
+                                        <span class="category-chip">{{ req.department.name }}</span>
+                                    {% else %}
+                                        <span class="text-muted small">Unassigned</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge status-badge status-{{ req.status }}">{{ req.get_status_display }}</span>
+                                </td>
+                                <td>
+                                    <form method="post" class="d-flex flex-wrap align-items-center gap-2">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="request_id" value="{{ req.id }}">
+                                        <select name="department" class="form-select form-select-sm"
+                                                aria-label="Department for request {{ req.id }}">
+                                            <option value="">Unassigned</option>
+                                            {% for department in departments %}
+                                                <option value="{{ department.id }}"
+                                                        {% if req.department_id == department.id %}selected{% endif %}>
+                                                    {{ department.name }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                        <select name="status" class="form-select form-select-sm"
+                                                aria-label="Status for request {{ req.id }}">
+                                            {% for value, label in status_choices %}
+                                                <option value="{{ value }}" {% if req.status == value %}selected{% endif %}>
+                                                    {{ label }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                        <button type="submit" class="btn btn-accent btn-sm">Update</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-muted">No service requests yet.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
