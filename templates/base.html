@@ -94,6 +94,13 @@
                                         <i class="bi bi-clipboard-check me-2"></i>My requests
                                     </a>
                                 </li>
+                                {% if user.role == 'manager' or user.role == 'admin' or user.is_superuser %}
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'department_dashboard' %}">
+                                            <i class="bi bi-building-gear me-2"></i>Department dashboard
+                                        </a>
+                                    </li>
+                                {% endif %}
                                 {% if user.role == 'admin' or user.is_superuser %}
                                     <li>
                                         <a class="dropdown-item" href="{% url 'admin_dashboard' %}">

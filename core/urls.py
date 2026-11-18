@@ -13,5 +13,7 @@ urlpatterns = [
     path('submit-request/', views.submit_request, name='submit_request'),
     path('my-requests/', views.my_requests, name='my_requests'),
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('department-dashboard/', views.department_dashboard, name='department_dashboard'),
+    path('requests/<int:request_id>/', views.request_detail, name='request_detail'),
     path('search/', views.search, name='search'),
 ]

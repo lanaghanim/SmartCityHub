@@ -22,6 +22,12 @@
        href="{% url 'my_requests' %}">
         <i class="bi bi-clipboard-check"></i><span>My Requests</span>
     </a>
+    {% if user.role == 'manager' or user.role == 'admin' or user.is_superuser %}
+        <a class="sidebar-link {% if request.resolver_match.url_name == 'department_dashboard' %}active{% endif %}"
+           href="{% url 'department_dashboard' %}">
+            <i class="bi bi-building-gear"></i><span>Departments</span>
+        </a>
+    {% endif %}
     {% if user.role == 'admin' or user.is_superuser %}
         <a class="sidebar-link {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}"
            href="{% url 'admin_dashboard' %}">

@@ -72,7 +72,10 @@
                             <div class="update-row">
                                 <div class="flex-grow-1 min-w-0">
                                     <div class="d-flex justify-content-between align-items-start gap-2">
-                                        <strong class="text-truncate min-w-0 flex-grow-1">{{ req.title }}</strong>
+                                        <a href="{% url 'request_detail' req.id %}"
+                                           class="text-reset text-truncate min-w-0 flex-grow-1 fw-semibold">
+                                            {{ req.title }}
+                                        </a>
                                         <span class="badge status-badge status-{{ req.status }}">{{ req.get_status_display }}</span>
                                     </div>
                                     <div class="meta-row">

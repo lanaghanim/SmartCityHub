@@ -11,7 +11,7 @@
         <ul class="event-meta list-unstyled">
             <li><i class="bi bi-geo-alt"></i>{{ event.location }}</li>
             <li><i class="bi bi-clock"></i>{{ event.time|time:"g:i A" }}</li>
-            <li><i class="bi bi-people"></i>Capacity: {{ event.capacity }}</li>
+            <li><i class="bi bi-people"></i>{{ event.registration_count|default:0 }} / {{ event.capacity }} registered</li>
             <li>
                 <i class="bi bi-tag"></i>
                 {% if event.price > 0 %}${{ event.price|floatformat:2 }}{% else %}Free entry{% endif %}

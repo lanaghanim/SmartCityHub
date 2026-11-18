@@ -1300,3 +1300,124 @@ a {
         padding: 0.8rem 1rem;
     }
 }
+
+/* ---------- Event discovery filters ---------- */
+
+.filter-card {
+    margin-bottom: 1.5rem;
+}
+
+.filter-card .card-body {
+    padding: 1.2rem 1.25rem;
+}
+
+.filter-card .form-label {
+    margin-bottom: 0.3rem;
+}
+
+.filter-card .form-control,
+.filter-card .form-select {
+    min-width: 0;
+}
+
+/* ---------- Request progress ---------- */
+
+.request-progress {
+    height: 0.85rem;
+    border-radius: 999px;
+    background: #e8eef6;
+}
+
+.request-progress-mini {
+    height: 0.35rem;
+    border-radius: 999px;
+    background: #e8eef6;
+}
+
+.request-progress .progress-bar,
+.request-progress-mini .progress-bar {
+    border-radius: 999px;
+}
+
+.progress-status-open {
+    background: #2563eb;
+}
+
+.progress-status-assigned {
+    background: #0284c7;
+}
+
+.progress-status-in_progress {
+    background: #d97706;
+}
+
+.progress-status-resolved {
+    background: #16a34a;
+}
+
+.progress-status-closed {
+    background: #64748b;
+}
+
+.request-timeline {
+    display: grid;
+    gap: 0.75rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.request-timeline li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--muted);
+    font-size: 0.86rem;
+}
+
+.timeline-dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.8rem;
+    height: 1.8rem;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: #eef3f8;
+    color: #8fa2b5;
+    font-size: 0.8rem;
+}
+
+.request-timeline li.is-done .timeline-dot {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.request-timeline li.is-current .timeline-dot {
+    background: var(--accent-600);
+    color: #fff;
+}
+
+.request-timeline li.is-done .timeline-label,
+.request-timeline li.is-current .timeline-label {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.request-details {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    gap: 0.8rem 1rem;
+    margin: 0;
+}
+
+.request-details dt {
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.request-details dd {
+    margin: 0;
+    font-size: 0.86rem;
+}

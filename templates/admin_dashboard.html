@@ -8,6 +8,11 @@
         <span class="section-eyebrow">Administration</span>
         <h1>Admin dashboard</h1>
         <p>Review service requests, update their status, and check event registrations.</p>
+        <div class="d-flex flex-wrap gap-2 mt-3">
+            <a href="{% url 'department_dashboard' %}" class="btn btn-soft btn-sm">
+                <i class="bi bi-building-gear me-1"></i>Department dashboard
+            </a>
+        </div>
     </div>
 
     <div class="card panel-card">
@@ -25,6 +30,7 @@
                             <th scope="col">Request</th>
                             <th scope="col">Submitted by</th>
                             <th scope="col">Category</th>
+                            <th scope="col">Department</th>
                             <th scope="col">Status</th>
                             <th scope="col">Update</th>
                         </tr>
@@ -34,11 +40,18 @@
                             <tr>
                                 <td class="text-muted">#{{ req.id }}</td>
                                 <td>
-                                    <strong>{{ req.title }}</strong>
+                                    <a href="{% url 'request_detail' req.id %}" class="fw-semibold">{{ req.title }}</a>
                                     <div class="small text-muted">{{ req.location }}</div>
                                 </td>
                                 <td>{{ req.submitted_by.username }}</td>
                                 <td>{{ req.get_category_display }}</td>
+                                <td>
+                                    {% if req.department %}
+                                        <span class="category-chip">{{ req.department.name }}</span>
+                                    {% else %}
+                                        <span class="text-muted small">Unassigned</span>
+                                    {% endif %}
+                                </td>
                                 <td>
                                     <span class="badge status-badge status-{{ req.status }}">{{ req.get_status_display }}</span>
                                 </td>
@@ -60,7 +73,7 @@
                             </tr>
                         {% empty %}
                             <tr>
-                                <td colspan="6" class="text-muted">No service requests yet.</td>
+                                <td colspan="7" class="text-muted">No service requests yet.</td>
                             </tr>
                         {% endfor %}
                     </tbody>

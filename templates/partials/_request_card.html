@@ -11,9 +11,32 @@
         <div class="meta-row">
             <span><i class="bi bi-geo-alt"></i>{{ req.location }}</span>
             <span><i class="bi bi-calendar3"></i>{{ req.created_at|date:"M j, Y" }}</span>
+            {% if req.department %}
+                <span><i class="bi bi-building"></i>{{ req.department.name }}</span>
+            {% endif %}
             {% if req.assigned_to %}
                 <span><i class="bi bi-person-check"></i>Assigned to {{ req.assigned_to.username }}</span>
             {% endif %}
+        </div>
+
+        <div class="progress request-progress-mini mt-3" role="progressbar"
+             aria-label="Request progress" aria-valuenow="{{ req.progress_percent }}"
+             aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar progress-status-{{ req.status }}"
+                 style="width: {{ req.progress_percent }}%"></div>
+        </div>
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
+            <span class="small text-muted">
+                {% if req.department %}
+                    Routed to {{ req.department.name }}
+                {% else %}
+                    Awaiting department assignment
+                {% endif %}
+            </span>
+            <a href="{% url 'request_detail' req.id %}" class="btn btn-soft btn-sm">
+                View progress<i class="bi bi-arrow-right ms-1"></i>
+            </a>
         </div>
     </div>
 </div>
